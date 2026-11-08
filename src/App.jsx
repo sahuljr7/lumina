@@ -25,7 +25,7 @@ export default function App() {
     document.documentElement.dataset.theme = theme
     document.documentElement.style.colorScheme = theme
     const themeColor = document.querySelector('meta[name="theme-color"]')
-    if (themeColor) themeColor.content = theme === 'dark' ? '#151a16' : '#e9e7df'
+    if (themeColor) themeColor.content = theme === 'dark' ? '#101712' : '#eef0ea'
   }, [theme])
 
   useEffect(() => {
