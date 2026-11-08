@@ -5,6 +5,7 @@ import { AppLayout } from './components/AppLayout.jsx'
 import { Dashboard } from './components/Dashboard.jsx'
 import { ProfessionIndex, ProfessionPage, NotFound } from './components/ProfessionPages.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
+import { CustomPromptBuilder } from './components/CustomPromptBuilder.jsx'
 const PromptWorkspace = lazy(() => import('./components/PromptWorkspace.jsx').then((module) => ({ default: module.PromptWorkspace })))
 
 function getInitialTheme() {
@@ -61,6 +62,7 @@ export default function App() {
     <AppLayout {...catalog} theme={theme} onToggleTheme={changeTheme}>
       <Routes>
         <Route path="/" element={<Dashboard {...catalog} />} />
+        <Route path="/custom-prompt-builder" element={<CustomPromptBuilder />} />
         <Route path="/professions" element={<ProfessionIndex {...catalog} />} />
         <Route path="/professions/:professionSlug" element={<ProfessionPage {...catalog} />} />
         <Route path="/prompts/:professionSlug/:promptSlug" element={<Suspense fallback={<div className="empty-state"><p>Opening the working document…</p></div>}><PromptWorkspace {...catalog} /></Suspense>} />

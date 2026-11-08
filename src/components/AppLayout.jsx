@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowRight, BookOpenText, ChevronDown, Command, FileText, Menu, Moon, Search, Sun, X } from 'lucide-react'
+import { ArrowRight, BookOpenText, ChevronDown, Command, FileText, Menu, Moon, Search, Sparkles, Sun, X } from 'lucide-react'
 
 export function AppLayout({ professions, prompts, theme, onToggleTheme, children }) {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -45,6 +45,9 @@ export function AppLayout({ professions, prompts, theme, onToggleTheme, children
                 </NavLink>
                 <NavLink to="/professions" className={({ isActive }) => `side-link ${isActive && location.pathname === '/professions' ? 'active' : ''}`} onClick={() => setMobileOpen(false)}>
                   <Command size={16} /><span>All disciplines</span><span className="side-count">{String(professions.length).padStart(2, '0')}</span>
+                </NavLink>
+                <NavLink to="/custom-prompt-builder" className={({ isActive }) => `side-link ${isActive ? 'active' : ''}`} onClick={() => setMobileOpen(false)}>
+                  <Sparkles size={16} /><span>Custom Prompt Builder</span><span className="side-count">06</span>
                 </NavLink>
               </div>
             </div>
