@@ -12,14 +12,14 @@ export function PromptCard({ prompt, showProfession = false, compact = false }) 
   return (
     <article className={`prompt-card ${compact ? 'prompt-card-compact' : ''}`}>
       <div className="prompt-card-topline">
-        <span className="prompt-type"><span className="type-dot" /> Prompt</span>
-        {prompt.featured && <span className="featured-label"><Sparkles size={12} /> Featured</span>}
+        <span className="prompt-type"><span className="type-dot" /> FIELD NOTE / {prompt.id.slice(0, 2).toUpperCase()}</span>
+        {prompt.featured && <span className="featured-label"><Sparkles size={11} /> Curated</span>}
       </div>
-      <Link className="prompt-card-title" to={`/prompts/${prompt.professionSlug}/${prompt.slug}`}>{prompt.title}<ArrowUpRight size={16} /></Link>
+      <Link className="prompt-card-title" to={`/prompts/${prompt.professionSlug}/${prompt.slug}`}>{prompt.title}<ArrowUpRight size={16} aria-hidden="true" /></Link>
       {showProfession && <Link className="prompt-profession-link" to={`/professions/${prompt.professionSlug}`}>{prompt.profession}</Link>}
       <p className="prompt-card-description">{prompt.description}</p>
       <div className="tag-row">{prompt.tags.slice(0, compact ? 2 : 3).map((tag) => <span className="tag" key={tag}>{tag}</span>)}</div>
-      <div className="prompt-card-footer"><span><Clock3 size={13} /> Updated {formatDate(prompt.updatedAt)}</span><Link to={`/prompts/${prompt.professionSlug}/${prompt.slug}`}>Open prompt <ArrowUpRight size={13} /></Link></div>
+      <div className="prompt-card-footer"><span><Clock3 size={12} aria-hidden="true" /> {formatDate(prompt.updatedAt)}</span><Link aria-label={`Open ${prompt.title}`} to={`/prompts/${prompt.professionSlug}/${prompt.slug}`}>Read prompt <ArrowUpRight size={12} aria-hidden="true" /></Link></div>
     </article>
   )
 }

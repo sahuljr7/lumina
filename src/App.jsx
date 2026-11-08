@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { getCatalog } from './data/catalog.js'
 import { AppLayout } from './components/AppLayout.jsx'
@@ -7,20 +7,49 @@ import { ProfessionIndex, ProfessionPage, NotFound } from './components/Professi
 import { SearchPage } from './components/SearchPage.jsx'
 const PromptWorkspace = lazy(() => import('./components/PromptWorkspace.jsx').then((module) => ({ default: module.PromptWorkspace })))
 
+function getInitialTheme() {
+  try {
+    const savedTheme = localStorage.getItem('prompt-library-theme')
+    if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme
+  } catch {
+    // Use the system theme when browser storage is unavailable.
+  }
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
+
 export default function App() {
   const catalog = useMemo(() => getCatalog(), [])
-  const [theme, setTheme] = useState(() => {
-    try {
-      return localStorage.getItem('prompt-library-theme') || 'light'
-    } catch {
-      return 'light'
+  const [theme, setTheme] = useState(getInitialTheme)
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    document.documentElement.style.colorScheme = theme
+    const themeColor = document.querySelector('meta[name="theme-color"]')
+    if (themeColor) themeColor.content = theme === 'dark' ? '#151a16' : '#e9e7df'
+  }, [theme])
+
+  useEffect(() => {
+    const hasSavedTheme = () => {
+      try {
+        const savedTheme = localStorage.getItem('prompt-library-theme')
+        return savedTheme === 'light' || savedTheme === 'dark'
+      } catch {
+        return false
+      }
     }
-  })
+    if (hasSavedTheme()) return undefined
+
+    const preference = window.matchMedia('(prefers-color-scheme: dark)')
+    const syncSystemTheme = (event) => {
+      if (!hasSavedTheme()) setTheme(event.matches ? 'dark' : 'light')
+    }
+    preference.addEventListener('change', syncSystemTheme)
+    return () => preference.removeEventListener('change', syncSystemTheme)
+  }, [])
 
   const changeTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light'
     setTheme(nextTheme)
-    document.documentElement.dataset.theme = nextTheme
     try {
       localStorage.setItem('prompt-library-theme', nextTheme)
     } catch {
@@ -34,7 +63,7 @@ export default function App() {
         <Route path="/" element={<Dashboard {...catalog} />} />
         <Route path="/professions" element={<ProfessionIndex {...catalog} />} />
         <Route path="/professions/:professionSlug" element={<ProfessionPage {...catalog} />} />
-        <Route path="/prompts/:professionSlug/:promptSlug" element={<Suspense fallback={<div className="empty-state"><p>Loading prompt workspace…</p></div>}><PromptWorkspace {...catalog} /></Suspense>} />
+        <Route path="/prompts/:professionSlug/:promptSlug" element={<Suspense fallback={<div className="empty-state"><p>Opening the working document…</p></div>}><PromptWorkspace {...catalog} /></Suspense>} />
         <Route path="/search" element={<SearchPage {...catalog} />} />
         <Route path="/404" element={<NotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />

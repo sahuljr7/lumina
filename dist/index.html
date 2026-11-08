@@ -3,16 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f6f7fa" />
-    <meta name="description" content="Discover, customize, and organize high-quality AI prompts for every profession." />
-    <title>Prompt Library — Better prompts, ready to work</title>
+    <meta name="theme-color" content="#e9e7df" />
+    <meta name="description" content="A considered library of customizable AI prompts for the work behind the work." />
+    <title>Prompt Library — A field guide to better work</title>
     <script>
       try {
-        document.documentElement.dataset.theme = localStorage.getItem('prompt-library-theme') || 'light'
-      } catch {}
+        const savedTheme = localStorage.getItem('prompt-library-theme')
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        document.documentElement.dataset.theme = savedTheme === 'light' || savedTheme === 'dark'
+          ? savedTheme
+          : systemPrefersDark ? 'dark' : 'light'
+      } catch {
+        document.documentElement.dataset.theme = 'light'
+      }
     </script>
-    <script type="module" crossorigin src="/assets/index-ChatwZMU.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-ChBNELyQ.css">
+    <script type="module" crossorigin src="/assets/index-cV8H0qgd.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-C3ZZ4riL.css">
   </head>
   <body>
     <div id="root"></div>
