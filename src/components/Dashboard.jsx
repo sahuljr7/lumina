@@ -1,6 +1,6 @@
-import { ArrowRight, ArrowUpRight, BarChart3, BriefcaseBusiness, Code2, FolderKanban, Megaphone, Plus, Sparkles } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, BarChart3, BriefcaseBusiness, Code2, FolderKanban, Megaphone } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { PromptCard } from './PromptCard.jsx'
+import { PromptCard, formatDate } from './PromptCard.jsx'
 
 const professionIcons = {
   'software-engineering': Code2,
@@ -17,74 +17,91 @@ export function Dashboard({ prompts, professions }) {
   const recentlyAdded = prompts.filter((prompt) => prompt.updatedAt && Date.now() - new Date(prompt.updatedAt).getTime() < 30 * 86400000).length
 
   return (
-    <div className="dashboard-page page-enter">
-      <section className="hero-editorial" aria-labelledby="home-title">
+    <div className="dashboard-page">
+      <section className="hero" aria-labelledby="home-title">
         <div className="hero-copy">
-          <div className="hero-overline"><span className="hero-overline-rule" /> FIELD GUIDE <span>VOL. 01 / 2026</span></div>
-          <h1 id="home-title" className="hero-title">A library for<br />the work behind<br /><em>the work.</em></h1>
+          <h1 id="home-title">A library for the work behind the work.</h1>
           <p className="hero-description">Thoughtful prompts are working tools, not magic words. Find a starting point, bring your context, and get to a sharper first draft.</p>
           <div className="hero-actions">
-            <Link className="button button-primary" to="/professions">Browse the index <ArrowRight size={15} /></Link>
-            <span className="hero-index-note"><Sparkles size={13} /> Curated for real work</span>
+            <Link className="button button-primary" to="/professions">Browse prompts <ArrowRight size={15} /></Link>
+            <Link className="button button-secondary" to="/custom-prompt-builder">Build a custom prompt</Link>
           </div>
         </div>
 
-        {exemplar && <article className="feature-sheet">
-          <div className="feature-sheet-topline"><span>FROM THE STACK / 001</span><span className="feature-sheet-index">NO. 01</span></div>
-          <div className="feature-sheet-art" aria-hidden="true"><span className="feature-glyph">P.</span><span className="feature-art-copy">A useful prompt<br />makes room for<br />your point of view.</span></div>
-          <span className="feature-sheet-label">A place to begin / {exemplar.profession}</span>
-          <h2>{exemplar.title}</h2>
-          <p>{exemplar.description}</p>
-          <div className="feature-sheet-bottom"><div className="feature-sheet-tags">{exemplar.tags.slice(0, 2).map((tag) => <span key={tag}>{tag}</span>)}</div><Link className="feature-sheet-link" to={`/prompts/${exemplar.professionSlug}/${exemplar.slug}`}>Open prompt <ArrowUpRight size={13} /></Link></div>
-        </article>}
+        {exemplar && (
+          <aside className="start-card" aria-label="Featured prompt">
+            <span className="start-card-label">Start here</span>
+            <h2>{exemplar.title}</h2>
+            <p>{exemplar.description}</p>
+            <div className="start-card-meta">{exemplar.profession} · {exemplar.tags.slice(0, 2).join(', ')}</div>
+            <Link className="text-link" to={`/prompts/${exemplar.professionSlug}/${exemplar.slug}`}>Open prompt <ArrowUpRight size={14} /></Link>
+          </aside>
+        )}
       </section>
 
-      <div className="library-ledger" aria-label="Library statistics">
-        <LedgerItem value={String(professions.length).padStart(2, '0')} label="Disciplines" />
-        <LedgerItem value={String(prompts.length).padStart(2, '0')} label="Working templates" />
-        <LedgerItem value={String(recentlyAdded).padStart(2, '0')} label="Added this month" />
+      <div className="stats" aria-label="Library statistics">
+        <div className="stat"><strong>{professions.length}</strong><span>Disciplines</span></div>
+        <div className="stat"><strong>{prompts.length}</strong><span>Prompts</span></div>
+        <div className="stat"><strong>{recentlyAdded}</strong><span>Added this month</span></div>
       </div>
 
-      <section className="section-block" aria-labelledby="disciplines-heading">
-        <div className="section-heading"><div className="section-heading-main"><span className="section-number">01</span><div><div className="eyebrow eyebrow-accent">OPEN THE INDEX</div><h2 id="disciplines-heading">Start with a discipline</h2><p>Different work asks for different questions.</p></div></div><Link className="text-link" to="/professions">All disciplines <ArrowRight size={14} /></Link></div>
-        <div className="profession-directory">
-          {professions.map((profession, index) => {
+      <section className="section" aria-labelledby="disciplines-heading">
+        <div className="section-header">
+          <h2 id="disciplines-heading">Disciplines</h2>
+          <Link className="text-link" to="/professions">View all <ArrowRight size={14} /></Link>
+        </div>
+        <div className="list">
+          {professions.map((profession) => {
             const Icon = professionIcons[profession.slug] || BriefcaseBusiness
-            return <Link className="profession-directory-row" to={`/professions/${profession.slug}`} key={profession.slug}>
-              <span className="directory-number">{String(index + 1).padStart(2, '0')}</span>
-              <Icon className="directory-icon" size={20} strokeWidth={1.55} aria-hidden="true" />
-              <span className="directory-copy"><strong>{profession.name}</strong><p>{profession.description}</p></span>
-              <span className="directory-count"><strong>{String(profession.prompts.length).padStart(2, '0')}</strong> prompts</span>
-              <ArrowUpRight className="directory-arrow" size={17} aria-hidden="true" />
-            </Link>
+            return (
+              <Link className="list-row" to={`/professions/${profession.slug}`} key={profession.slug}>
+                <span className="list-icon"><Icon size={17} strokeWidth={1.8} aria-hidden="true" /></span>
+                <span className="list-copy"><strong>{profession.name}</strong><span>{profession.description}</span></span>
+                <span className="list-meta">{profession.prompts.length} {profession.prompts.length === 1 ? 'prompt' : 'prompts'}</span>
+                <ArrowUpRight className="list-arrow" size={16} aria-hidden="true" />
+              </Link>
+            )
           })}
         </div>
       </section>
 
-      {featured.length > 0 && <section className="section-block" aria-labelledby="featured-heading">
-        <div className="section-heading"><div className="section-heading-main"><span className="section-number">02</span><div><div className="eyebrow eyebrow-accent">EDITOR&apos;S SHELF</div><h2 id="featured-heading">A good place to begin</h2></div></div><Link className="text-link" to="/search?featured=true">All featured prompts <ArrowRight size={14} /></Link></div>
-        <div className="prompt-card-grid">{featured.map((prompt) => <PromptCard key={prompt.id} prompt={prompt} showProfession />)}</div>
-      </section>}
+      {featured.length > 0 && (
+        <section className="section" aria-labelledby="featured-heading">
+          <div className="section-header">
+            <h2 id="featured-heading">Featured</h2>
+            <Link className="text-link" to="/search?featured=true">All featured <ArrowRight size={14} /></Link>
+          </div>
+          <div className="prompt-grid">{featured.map((prompt) => <PromptCard key={prompt.id} prompt={prompt} showProfession />)}</div>
+        </section>
+      )}
 
-      <section className="recent-section section-block" aria-labelledby="recent-heading">
-        <div className="section-heading"><div className="section-heading-main"><span className="section-number">03</span><div><div className="eyebrow eyebrow-accent">JUST ADDED</div><h2 id="recent-heading">Fresh from the stack</h2></div></div><Link className="text-link" to="/search?recent=true">See what&apos;s new <ArrowRight size={14} /></Link></div>
-        <div className="recent-list">{recent.map((prompt, index) => <RecentRow key={prompt.id} prompt={prompt} index={index} />)}</div>
+      <section className="section" aria-labelledby="recent-heading">
+        <div className="section-header">
+          <h2 id="recent-heading">Recently added</h2>
+          <Link className="text-link" to="/search?recent=true">See all <ArrowRight size={14} /></Link>
+        </div>
+        <div className="recent-list">
+          {recent.map((prompt) => <RecentRow key={prompt.id} prompt={prompt} />)}
+        </div>
       </section>
 
-      <aside className="add-prompt-hint"><span className="add-prompt-icon"><Plus size={17} /></span><div><strong>Keep the library in motion.</strong><p>Add a <code>.md</code> file to a discipline folder to make it part of the index.</p></div><Link to="/professions">How it works <ArrowRight size={13} /></Link></aside>
+      <p className="page-note">
+        Add a Markdown file to a discipline folder to grow the library.
+        <Link className="text-link" to="/professions">Learn how <ArrowRight size={13} /></Link>
+      </p>
     </div>
   )
 }
 
-function LedgerItem({ value, label }) {
-  return <div className="ledger-item"><strong>{value}</strong><span>{label}</span></div>
-}
-
-function RecentRow({ prompt, index }) {
-  const initials = prompt.profession.split(/[ &]/).filter(Boolean).slice(0, 2).map((word) => word[0]).join('')
-  return <Link className="recent-row" to={`/prompts/${prompt.professionSlug}/${prompt.slug}`}>
-    <span className="recent-avatar">{String(index + 1).padStart(2, '0')}</span>
-    <span className="recent-row-copy"><strong>{prompt.title}</strong><small>{initials} / {prompt.profession} / {prompt.tags.slice(0, 2).join(', ')}</small></span>
-    <span className="recent-row-date">{prompt.updatedAt}</span><ArrowUpRight className="recent-row-arrow" size={15} />
-  </Link>
+function RecentRow({ prompt }) {
+  return (
+    <Link className="recent-row" to={`/prompts/${prompt.professionSlug}/${prompt.slug}`}>
+      <span className="recent-copy">
+        <strong>{prompt.title}</strong>
+        <span>{prompt.profession} · {prompt.tags.slice(0, 2).join(', ')}</span>
+      </span>
+      <span className="recent-date">{formatDate(prompt.updatedAt)}</span>
+      <ArrowUpRight className="list-arrow" size={15} aria-hidden="true" />
+    </Link>
+  )
 }

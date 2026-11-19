@@ -46,32 +46,30 @@ export function CustomPromptBuilder() {
   }
 
   return (
-    <div className="custom-prompt-page page-enter">
-      <header className="custom-prompt-page-header">
-        <div className="custom-prompt-heading-copy">
-          <div className="eyebrow eyebrow-accent">START HERE <span className="title-eyebrow-dot">/</span> 06</div>
+    <div className="builder-page">
+      <header className="page-header">
+        <div className="page-header-copy">
           <h1>Custom prompt builder</h1>
-          <p>Write a template, fill its fields, then review the finished prompt before you copy it.</p>
+          <p className="page-intro">Write a template, fill its fields, then copy the finished prompt.</p>
         </div>
-        <div className="custom-prompt-session-note"><Sparkles size={14} aria-hidden="true" /><span>Session only. Nothing is saved.</span></div>
+        <span className="builder-note"><Sparkles size={13} aria-hidden="true" /> Session only. Nothing is saved.</span>
       </header>
 
-      <div className="custom-prompt-layout">
-        <div className="custom-prompt-input-stack">
-          <section className="custom-prompt-card" aria-labelledby="custom-prompt-editor-title">
-            <div className="custom-prompt-section-heading">
-              <span className="custom-prompt-step">01</span>
+      <div className="builder-grid">
+        <div className="builder-main">
+          <section className="panel-card" aria-labelledby="custom-prompt-editor-title">
+            <div className="panel-title-row">
               <div>
                 <h2 id="custom-prompt-editor-title">Write your template</h2>
                 <p>Use braces to mark any value you want to fill in.</p>
               </div>
-              <button className="custom-prompt-clear" type="button" onClick={clearWorkspace} disabled={!hasTemplate}>
-                <Eraser size={14} aria-hidden="true" /> Clear
+              <button className="builder-clear" type="button" onClick={clearWorkspace} disabled={!hasTemplate}>
+                <Eraser size={13} aria-hidden="true" /> Clear
               </button>
             </div>
             <label className="sr-only" htmlFor="custom-prompt-template">Prompt template</label>
             <textarea
-              className="custom-prompt-editor"
+              className="builder-editor"
               id="custom-prompt-template"
               rows={9}
               value={template}
@@ -82,73 +80,70 @@ export function CustomPromptBuilder() {
               placeholder="Write or paste your prompt here. Add a field like {topic} wherever you want a value."
               spellCheck="true"
             />
-            <div className="custom-prompt-editor-meta">
-              <span><Braces size={13} aria-hidden="true" /> {placeholders.length} unique {placeholders.length === 1 ? 'field' : 'fields'} detected</span>
+            <div className="builder-meta">
+              <span><Braces size={12} aria-hidden="true" /> {placeholders.length} unique {placeholders.length === 1 ? 'field' : 'fields'} detected</span>
               <span>Repeating a field reuses its value.</span>
             </div>
           </section>
 
-          <section className="custom-prompt-card" aria-labelledby="custom-prompt-fields-title">
-            <div className="custom-prompt-section-heading">
-              <span className="custom-prompt-step">02</span>
+          <section className="panel-card" aria-labelledby="custom-prompt-fields-title">
+            <div className="panel-title-row">
               <div>
                 <h2 id="custom-prompt-fields-title">Fill the fields</h2>
                 <p>{placeholders.length ? `${filledCount} of ${placeholders.length} filled` : 'Fields appear when you add placeholders.'}</p>
               </div>
             </div>
             {placeholders.length ? (
-              <div className="custom-prompt-value-grid">
-                {placeholders.map((placeholder, index) => (
+              <div className="builder-fields">
+                {placeholders.map((placeholder) => (
                   <PlaceholderField
                     key={placeholder.key}
                     placeholder={placeholder}
-                    index={index}
                     value={values[placeholder.key] || ''}
                     onChange={(value) => updateValue(placeholder.key, value)}
                   />
                 ))}
               </div>
             ) : (
-              <div className="custom-prompt-no-fields">
-                <Braces size={16} aria-hidden="true" />
+              <div className="builder-empty">
+                <Braces size={15} aria-hidden="true" />
                 <p>Add a field such as <code>{'{topic}'}</code> to create an input here.</p>
               </div>
             )}
           </section>
         </div>
 
-        <section className="custom-prompt-card custom-prompt-preview-card" aria-labelledby="custom-prompt-preview-title">
-          <div className="custom-prompt-section-heading custom-prompt-preview-heading">
-            <span className="custom-prompt-step">03</span>
+        <section className="panel-card builder-preview-card" aria-labelledby="custom-prompt-preview-title">
+          <div className="panel-title-row">
             <div>
-              <h2 id="custom-prompt-preview-title">Preview &amp; check</h2>
+              <h2 id="custom-prompt-preview-title">Preview</h2>
               <p>Unfilled fields stay highlighted until you add a value.</p>
             </div>
-            <span className={`custom-prompt-ready-state ${canCopyCompleted ? 'is-ready' : ''}`}>
-              {canCopyCompleted ? <><Check size={13} aria-hidden="true" /> Ready</> : hasTemplate ? `${missingCount} open` : 'Add prompt'}
+            <span className={`builder-status ${canCopyCompleted ? 'is-ready' : ''}`}>
+              {canCopyCompleted ? <><Check size={12} aria-hidden="true" /> Ready</> : hasTemplate ? `${missingCount} open` : 'Empty'}
             </span>
           </div>
 
-          <div className="custom-prompt-preview-text" aria-label="Live prompt preview">
+          <div className="builder-preview-text" aria-label="Live prompt preview">
             {hasTemplate ? previewParts.map((part, index) => part.type === 'missing'
-              ? <mark className="custom-prompt-token-empty" key={`${part.value}-${index}`}>{part.value}</mark>
+              ? <mark className="builder-token-empty" key={`${part.value}-${index}`}>{part.value}</mark>
               : <span key={`text-${index}`}>{part.value}</span>)
-              : <span className="custom-prompt-preview-placeholder">Your prompt preview will appear here.</span>}
+              : <span className="builder-preview-placeholder">Your prompt preview will appear here.</span>}
           </div>
 
           {hasTemplate && missingCount > 0 && placeholders.length > 0 && (
-            <p className="custom-prompt-open-note"><Braces size={14} aria-hidden="true" /> Fill the remaining fields to copy a completed prompt.</p>
+            <p className="builder-note-line"><Braces size={13} aria-hidden="true" /> Fill the remaining fields to copy a completed prompt.</p>
           )}
 
-          <div className="custom-prompt-copy-actions" aria-label="Copy options">
-            <button className="button button-secondary" type="button" onClick={() => copyText(template, 'Template copied with its placeholders.') } disabled={!hasTemplate}>
-              <Clipboard size={15} aria-hidden="true" /> Copy template
+          <div className="builder-actions" aria-label="Copy options">
+            <button className="button button-secondary" type="button" onClick={() => copyText(template, 'Template copied with its placeholders.')} disabled={!hasTemplate}>
+              <Clipboard size={14} aria-hidden="true" /> Copy template
             </button>
-            <button className="button button-primary" type="button" onClick={() => copyText(completedPrompt, 'Completed prompt copied.') } disabled={!canCopyCompleted}>
-              <ClipboardCheck size={15} aria-hidden="true" /> Copy completed prompt
+            <button className="button button-primary" type="button" onClick={() => copyText(completedPrompt, 'Completed prompt copied.')} disabled={!canCopyCompleted}>
+              <ClipboardCheck size={14} aria-hidden="true" /> Copy completed prompt
             </button>
           </div>
-          <p className="custom-prompt-copy-status" role="status" aria-live="polite">
+          <p className="builder-status-line" role="status" aria-live="polite">
             {copyStatus || (hasTemplate ? missingCount ? 'Complete every field to enable the completed copy.' : 'Both versions are ready to copy.' : 'Write a prompt to enable copy options.')}
           </p>
         </section>
@@ -157,21 +152,18 @@ export function CustomPromptBuilder() {
   )
 }
 
-function PlaceholderField({ placeholder, index, value, onChange }) {
+function PlaceholderField({ placeholder, value, onChange }) {
   const id = `custom-prompt-value-${placeholder.key}`
   const multiline = isMultilineCustomPlaceholder(placeholder.name)
   const label = formatCustomPlaceholderLabel(placeholder.name)
 
   return (
-    <div className="custom-prompt-value-field">
-      <label htmlFor={id}>
-        <span className="custom-prompt-field-number">{String(index + 1).padStart(2, '0')}</span>
-        {label}
-      </label>
+    <div className="field">
+      <label htmlFor={id}>{label}</label>
       {multiline ? (
-        <textarea id={id} rows={3} value={value} onChange={(event) => onChange(event.target.value)} placeholder={`Add ${label.toLowerCase()}...`} />
+        <textarea id={id} rows={3} value={value} onChange={(event) => onChange(event.target.value)} placeholder={`Add ${label.toLowerCase()}…`} />
       ) : (
-        <input id={id} value={value} onChange={(event) => onChange(event.target.value)} placeholder={`Enter ${label.toLowerCase()}...`} />
+        <input id={id} value={value} onChange={(event) => onChange(event.target.value)} placeholder={`Enter ${label.toLowerCase()}…`} />
       )}
     </div>
   )
