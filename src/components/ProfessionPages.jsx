@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
-import { ArrowLeft, ArrowUpRight, BarChart3, BriefcaseBusiness, Code2, FolderKanban, Megaphone, Search } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight, BarChart3, BriefcaseBusiness, Code2, FolderKanban, Megaphone, Search, Sparkles } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { PromptCard } from './PromptCard.jsx'
 
 const professionMarks = {
+  general: Sparkles,
   'software-engineering': Code2,
   marketing: Megaphone,
   'data-science': BarChart3,
