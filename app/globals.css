@@ -1,5 +1,11 @@
 @import 'tailwindcss';
 
+/*
+  Prompt Library design system
+  One sans-serif family, one accent color, restrained borders and radii.
+  Shared tokens live on :root; dark-theme overrides live on [data-theme='dark'].
+*/
+
 :root {
   color-scheme: light;
   --bg: #fafaf8;

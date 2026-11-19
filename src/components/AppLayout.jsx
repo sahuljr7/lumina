@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { BookOpenText, ChevronsLeft, LayoutGrid, Menu, Moon, PenLine, Search, Sun, X } from 'lucide-react'
 
+// App shell: a quiet sidebar for navigation, with search and theme controls in the header.
 const navClass = ({ isActive }) => `nav-link ${isActive ? 'active' : ''}`
 
 export function AppLayout({ professions, prompts, theme, onToggleTheme, children }) {
